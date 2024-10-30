@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3306
--- Tiempo de generación: 29-10-2024 a las 15:02:12
+-- Tiempo de generación: 30-10-2024 a las 12:26:18
 -- Versión del servidor: 10.11.9-MariaDB
 -- Versión de PHP: 7.2.34
 
@@ -190,7 +190,7 @@ CREATE TABLE `productos` (
 INSERT INTO `productos` (`id_producto`, `producto`, `cod_barra`, `cantidad`, `medida`, `precio_costo`, `precio_menor`, `precio_mayor`, `cantidad_mayor`, `id_comercio`, `id_usuario`, `fecha`) VALUES
 (8, 'quimico', '1234567', 120, '', 1200, 2300, 1900, 10, 1, 1, '2024-10-14'),
 (9, 'quimico2', '234441', 26, '', 700, 1000, 900, 10, 1, 1, '2024-10-23'),
-(11, 'Cloro Hipoclorito', '100', 10000, '', 50, 150, 120, 5, 2, 2, '2024-10-24'),
+(11, 'Cloro Hipoclorito', '100', 15000, '', 50, 150, 120, 5, 2, 2, '2024-10-24'),
 (12, 'Cloro Puro Pileta', '101', 10000, '', 0, 300, 400, 5, 2, 2, '2024-10-24'),
 (13, 'Lavandina Ropa Color', '102', 10000, '', 0, 450, 400, 5, 2, 2, '2024-10-24'),
 (14, 'Lavandina Gel', '103', 20000, '', 0, 500, 440, 5, 2, 2, '2024-10-24'),

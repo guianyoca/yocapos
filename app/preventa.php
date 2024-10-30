@@ -148,6 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </div>
                             <div class="row mt-3">
                                 <div class="col-md-12 text-center">
+                                    <button type="button" class="btn btn-info" onclick="mostrarDetalleFinal()">Ver detalle final</button>
                                     <button type="submit" name="crear_pedido" class="btn btn-primary">Crear Pedido</button>
                                     <button type="button" class="btn btn-secondary" onclick="imprimirPresupuesto()">Imprimir Presupuesto</button>
                                 </div>
@@ -165,9 +166,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 function actualizarSubtotal(input) {
     var row = input.closest('tr');
     var cantidad = parseInt(input.value);
-    var precioMenor = parseFloat(row.querySelector('.precio-menor').textContent);
-    var precioMayor = parseFloat(row.querySelector('.precio-mayor').textContent.replace('$',''));
-    var cantidadMayor = parseInt(row.querySelector('.cantidad-mayor').textContent);
+    var precioMenor = parseFloat(row.querySelector('.precio-menor').textContent.replace(/[^0-9.]/g, ''));
+    var precioMayor = parseFloat(row.querySelector('td:nth-child(4)').textContent.replace(/[^0-9.]/g, ''));
+    var cantidadMayor = parseInt(row.querySelector('td:nth-child(5)').textContent);
     
     var precio = cantidad >= cantidadMayor ? precioMayor : precioMenor;
     var subtotal = cantidad * precio;
@@ -180,7 +181,7 @@ function actualizarSubtotal(input) {
 function actualizarTotal() {
     var total = 0;
     document.querySelectorAll('.subtotal').forEach(function(el) {
-        total += parseFloat(el.textContent.replace('$', ''));
+        total += parseFloat(el.textContent.replace(/[^0-9.]/g, '')) || 0;
     });
     document.getElementById('totalPedido').textContent = total.toFixed(2);
 }
@@ -196,6 +197,7 @@ function agregarAlPedido(btn) {
         btn.classList.remove('btn-info');
         btn.classList.add('btn-success');
         actualizarSubtotal(cantidadInput);
+        actualizarTotal();
     } else {
         alert('Por favor, ingrese una cantidad válida.');
     }
@@ -242,6 +244,50 @@ function imprimirPresupuesto() {
     ventana.document.close();
     ventana.print();
 }
+
+function mostrarDetalleFinal() {
+    var contenido = '<table class="table"><thead><tr><th>Producto</th><th>Cantidad</th><th>Precio Unitario</th><th>Subtotal</th></tr></thead><tbody>';
+    var total = 0;
+    
+    document.querySelectorAll('#productosTable tr').forEach(function(row) {
+        var cantidad = parseInt(row.querySelector('.cantidad').value);
+        if (cantidad > 0) {
+            var producto = row.querySelector('h6').textContent;
+            var subtotal = parseFloat(row.querySelector('.subtotal').textContent.replace(/[^0-9.]/g, ''));
+            var precioUnitario = subtotal / cantidad;
+            
+            contenido += '<tr><td>' + producto + '</td><td>' + cantidad + '</td><td>$' + precioUnitario.toFixed(2) + '</td><td>$' + subtotal.toFixed(2) + '</td></tr>';
+            total += subtotal;
+        }
+    });
+    
+    contenido += '</tbody></table>';
+    contenido += '<h4 class="text-end">Total: $' + total.toFixed(2) + '</h4>';
+    
+    document.getElementById('detalleFinalContenido').innerHTML = contenido;
+    
+    var modal = new bootstrap.Modal(document.getElementById('detalleFinaModal'));
+    modal.show();
+}
 </script>
+
+<!-- Modal para mostrar el detalle final -->
+<div class="modal fade" id="detalleFinaModal" tabindex="-1" aria-labelledby="detalleFinaModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="detalleFinaModalLabel">Detalle Final del Pedido</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="detalleFinalContenido">
+        <!-- El contenido se llenará dinámicamente con JavaScript -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" onclick="document.getElementById('formPedido').submit();">Confirmar Pedido</button>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
